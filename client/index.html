@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Simple WebSocket Client</title>
+  </head>
+  <body>
+    <h1>WebSocket Client</h1>
+    <div id="messages"></div>
+    <form id="send-form">
+        <table>
+            <tr>
+                <td>Destination ID</td>
+                <td>:</td>
+                <td>
+                    <input type="text" id="dst-message"><br>
+                </td>
+            </tr>
+            <tr>
+                <td>Message</td>
+                <td>:</td>
+                <td>
+                    <input type="text" id="txt-message"><br>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="3" align="right">
+                    <button type="submit">Send</button>
+                </td>
+            </tr>
+        </table>
+    </form>
+    <script>
+      const box = document.getElementById('messages');
+      const txtMessage = document.getElementById('txt-message');
+      const dstMessage = document.getElementById('dst-message');
+      const txtForm = document.getElementById('send-form');
+      const ws = new WebSocket('ws://localhost:3000');
+
+      ws.onopen = function() {
+        box.innerHTML += '<p>Connected</p>';
+      };
+
+      ws.onmessage = function(event) {
+        box.innerHTML += '<p>Received message: ' + event.data + '</p>';
+      };
+
+      ws.onclose = function(event) {
+        box.innerHTML += '<p>Connection Closed</p>';
+      };
+
+      ws.onerror = function(error) {
+        box.innerHTML += '<p>Connection error: ' + error.message + '</p>';
+      };
+
+      txtForm.addEventListener('submit', function(event) {
+        event.preventDefault();
+        const message = {
+            to: dstMessage.value,
+            text: txtMessage.value,
+        };
+        ws.send(JSON.stringify(message));
+        txtMessage.value = '';
+      });
+    </script>
+  </body>
+</html>
