@@ -7,6 +7,7 @@ const server = http.createServer(app);
 const wss = new WebSocket.Server({ server });
 
 const clients = [];
+const apps = [];
 
 function URLToArray(url) {
   var request = {};
@@ -25,19 +26,28 @@ wss.on('connection', (ws, request) => {
   const param = URLToArray(request.url);
   // const header = ws.upgradeReq.headers;
   const id = param['client-id'];
+  const app_name = param['app'];
   console.log(`Client connected with id : ${id}`);
   // console.log(request);
   
   // store id
   ws.id = id;
-  clients[id] = ws;
+  // console.log(apps);
+  if(!wss.clients.hasOwnProperty(app_name)){
+    wss.clients[app_name] = {
+      clients : [],
+    }
+  }
+  wss.clients[app_name].clients.push(ws);
+  // console.log(apps);
+  // clients[id] = ws;
 
   // message handler
   ws.on('message', (message) => {
     message = JSON.parse(message);
 
     let messageSent = false;
-    wss.clients.forEach((client) => {
+    wss.clients[app_name].clients.forEach((client) => {
       if (typeof message.to == 'undefined') {
         // broadcast message
         if (client.readyState === WebSocket.OPEN) {
@@ -46,7 +56,7 @@ wss.on('connection', (ws, request) => {
       }
       else {
         // privat message
-        if(client == clients[message.to]){
+        if(client.id == message.to){
           client.send(message.text);
         }
       }
