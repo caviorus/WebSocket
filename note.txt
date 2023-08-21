@@ -1,0 +1,5 @@
+#auth credential
+- account-id
+- app-id
+- app-channel
+- client-id
