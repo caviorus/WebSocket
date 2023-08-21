@@ -6,12 +6,34 @@ const app = express();
 const server = http.createServer(app);
 const wss = new WebSocket.Server({ server });
 
+//mysql
+// const mysql = require('mysql');
+// const db = mysql.createConnection({
+//   host: 'localhost',
+//   user: 'root',
+//   password: '',
+//   database: 'ws',
+// });
+
+// db.connect();
+
 const clients = [];
 
-wss.on('connection', (ws) => {
+wss.on('connection', (ws, request) => {
   // generate id
   const id = Math.random().toString(36).slice(2);
   console.log(`Client connected with id : ${id}`);
+  // const url = new URL(request.url, 'ws://localhost:3000');
+  // const clientId = url.searchParams.get('client-id');
+  // const appId = url.searchParams.get('app-id');
+  // const appChannel = url.searchParams.get('app-channel'); 
+
+  // db.query(`SELECT * FROM users where access_key = '${clientId}'`, function(error, result, fields){
+  //   console.log(error);
+  //   console.log(result.length);
+  // });
+
+  // console.log(`connected with parameters : ${clientId},${appId},${appChannel}`);
 
   // store id
   ws.id = id;
@@ -24,7 +46,7 @@ wss.on('connection', (ws) => {
 
     let messageSent = false;
     wss.clients.forEach((client) => {
-      if (message.to.length == 0) {
+      if (typeof message.to != 'undefined') {
         // broadcast message
         if (client.readyState === WebSocket.OPEN) {
           client.send(message.text);

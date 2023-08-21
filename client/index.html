@@ -34,7 +34,8 @@
       const txtMessage = document.getElementById('txt-message');
       const dstMessage = document.getElementById('dst-message');
       const txtForm = document.getElementById('send-form');
-      const ws = new WebSocket('ws://localhost:3000');
+      const url = encodeURI('ws://localhost:3000?client-id=b8609de7b1efde3bc6323fb56474e5115c855052&app-id=75aea3a98415b4f0b9de741363d6f52866df25b0&app-channel=app_testing');
+      const ws = new WebSocket(url);
 
       ws.onopen = function() {
         box.innerHTML += '<p>Connected</p>';
