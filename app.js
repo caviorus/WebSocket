@@ -6,9 +6,6 @@ const app = express();
 const server = http.createServer(app);
 const wss = new WebSocket.Server({ server });
 
-const clients = [];
-const apps = [];
-
 function URLToArray(url) {
   var request = {};
   var pairs = url.substring(url.indexOf('?') + 1).split('&');
